@@ -15,7 +15,31 @@ class ContactController {
     return response.json(contact);
   }
 
-  store() {
+  async store(request, response) {
+    const {
+      name, email, phone, category_id,
+    } = request.body;
+
+    const hasEmailDuplicate = await ContactRepository.findByEmail(email);
+    const hasPhoneDuplicate = await ContactRepository.findByPhone(phone);
+
+    if (!name || !phone) {
+      return response.status(400).json({ error: 'You need to provide a name and a phone number to create a new contact' });
+    }
+
+    if (hasEmailDuplicate) {
+      return response.status(400).json({ error: 'There is another contact with this e-mail' });
+    }
+
+    if (hasPhoneDuplicate) {
+      return response.status(400).json({ error: 'There is another contact with this phone number' });
+    }
+
+    const contact = await ContactRepository.create({
+      name, email, phone, category_id,
+    });
+
+    return response.json(contact);
   }
 
   update() {
@@ -31,6 +55,5 @@ class ContactController {
     return response.sendStatus(204);
   }
 }
-
 // Singleton
 module.exports = new ContactController();

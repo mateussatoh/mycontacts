@@ -30,6 +30,36 @@ class ContactRepository {
     ));
   }
 
+  findByEmail(email) {
+    return new Promise((resolve) => resolve(
+      contacts.find((contact) => contact.email === email),
+    ));
+  }
+
+  findByPhone(phone) {
+    return new Promise((resolve) => resolve(
+      contacts.find((contact) => contact.phone === phone),
+    ));
+  }
+
+  create({
+    name, email, phone, category_id,
+  }) {
+    return new Promise((resolve) => {
+      const newContact = {
+        id: uuidv4(),
+        name,
+        email,
+        phone,
+        category_id,
+      };
+      contacts.push(newContact);
+      resolve(
+        newContact,
+      );
+    });
+  }
+
   delete(id) {
     return new Promise((resolve) => {
       contacts = contacts.filter((contact) => contact.id !== id);
