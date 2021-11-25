@@ -19,12 +19,15 @@ class ContactController {
     const {
       name, email, phone, category_id,
     } = request.body;
-
     const hasEmailDuplicate = await ContactRepository.findByEmail(email);
     const hasPhoneDuplicate = await ContactRepository.findByPhone(phone);
 
     if (!name || !phone) {
       return response.status(400).json({ error: 'You need to provide a name and a phone number to create a new contact' });
+    }
+
+    if (hasEmailDuplicate && hasPhoneDuplicate) {
+      return response.status(400).json({ error: 'Both phone number and email are already in use' });
     }
 
     if (hasEmailDuplicate) {
